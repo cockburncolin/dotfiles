@@ -1,0 +1,9 @@
+* My dotfiles
+  Contains my configuration files for the following programs:
+  - Starship
+  - nushell
+  - Kitty
+  - Neovim
+
+
+
