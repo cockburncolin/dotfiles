@@ -1,0 +1,4 @@
+export EDITOR=nvim
+export TYPEWRITTEN_PROMPT_LAYOUT="pure"
+export TYPEWRITTEN_SYMBOL="󰘧"
+export TYPEWRITTEN_ARROW_SYMBOL="➜"
