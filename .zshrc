@@ -7,6 +7,14 @@ fi
 
 source "${ZINIT_HOME}/zinit.zsh"
 
+export PATH=$PATH:$HOME/scripts
+
+export EDITOR=nvim
+export TYPEWRITTEN_PROMPT_LAYOUT="pure"
+export GTK_THEME=dracula
+export TYPEWRITTEN_SYMBOL="󰘧"
+export TYPEWRITTEN_ARROW_SYMBOL="➜"
+
 alias cat=bat
 alias vim=nvim
 alias ls=exa --colour=always --icons=always --classify=always
@@ -21,8 +29,8 @@ zinit light reobin/typewritten
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::git
 zinit snippet OMZP::github
-zinit snippet OMZP::lol
 zinit snippet OMZP::sudo
+zinit snippet OMZP::colored-man-pages
 
 
 # load completions
@@ -55,6 +63,5 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 bindkey '^H' backward-kill-word
 
 eval "$(direnv hook zsh)"
-# eval "$(starship init zsh)"
 eval "$(zoxide init zsh --cmd cd)"
 eval "$(fzf --zsh)"

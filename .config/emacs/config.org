@@ -1,0 +1,320 @@
+#+TITLE: Colin's Emacs config
+#+STARTUP: showall
+#+PROPERTY: header-args:emacs-lisp :tangle yes
+
+* Table of Contents :toc:
+-  [[#notes][Notes]]
+-  [[#packages-to-load-first][Packages to load first]]
+  - [[#load-evil-mode][Load Evil Mode]]
+  - [[#general-keybindings][General Keybindings]]
+- [[#language-support][Language Support]]
+  - [[#nix][Nix]]
+- [[#theme--ui][Theme / UI]]
+  - [[#fonts][Fonts]]
+  - [[#dracula-theme][Dracula Theme]]
+  - [[#modeline][Modeline]]
+  - [[#rainbow-mode][Rainbow Mode]]
+  - [[#rainbow-delimiters][Rainbow Delimiters]]
+- [[#editor-tweaks][Editor Tweaks]]
+- [[#org-mode][Org-Mode]]
+  - [[#general-org-mode-tweaks][General Org-Mode Tweaks]]
+  - [[#capture-templates][Capture Templates]]
+  - [[#toc][TOC]]
+  - [[#org-tempo][Org-Tempo]]
+  - [[#org-bullets][Org-Bullets]]
+- [[#utilities][Utilities]]
+  - [[#avy][Avy]]
+  - [[#magit][Magit]]
+  - [[#which-key][Which-key]]
+  - [[#vterm][Vterm]]
+
+*  Notes
+I don't use a traditional Emacs package manager, I use nix to manage all my packages.  If not using nix use a package manager such as straight. 
+
+
+*  Packages to load first
+These packages need to be loaded before anything else.
+#+begin_src emacs-lisp
+(setq use-package-always-ensure t)
+#+end_src
+** Load Evil Mode
+#+begin_src emacs-lisp
+(use-package evil
+  :init      ;; tweak evil's configuration before loading it
+  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  :config
+  (evil-mode))
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+(use-package evil-tutor)
+#+end_src
+
+** General Keybindings
+#+begin_src emacs-lisp
+(use-package general
+  :config
+  (general-evil-setup)
+  
+  ;; set up 'SPC' as the global leader key
+  (general-create-definer colin/leader-keys
+    :states '(normal insert visual emacs)
+    :keymaps 'override
+    :prefix "SPC" ;; set leader
+    :global-prefix "M-SPC") ;; access leader in insert mode
+  
+  (colin/leader-keys
+    "SPC" '(counsel-M-x :wk "Counsel M-x")
+    "." '(find-file :wk "Find file")
+    "f c" '((lambda () (interactive) (find-file "~/.config/emacs/config.org")) :wk "Edit emacs config")
+    "f r" '(counsel-recentf :wk "Find recent files")
+    "TAB TAB" '(comment-line :wk "Comment lines"))
+  
+  (colin/leader-keys
+    "b" '(:ignore t :wk "Buffer")
+    "b b" '(switch-to-buffer :wk "Switch buffer")
+    "b i" '(ibuffer :wk "Ibuffer")
+    "b k" '(kill-current-buffer :wk "Kill this buffer")
+    "b n" '(next-buffer :wk "Next buffer")
+    "b p" '(previous-buffer :wk "Previous buffer")
+    "b r" '(revert-buffer :wk "Reload buffer"))
+  
+  (colin/leader-keys
+    "d" '(:ignore t :wk "Dired")
+    "d d" '(dired :wk "Open dired")
+    "d j" '(dired-jump :wk "Dired jump to current")
+    "d n" '(neotree-dir :wk "Open directory in neotree")
+    "d p" '(peep-dired :wk "Peep-dired"))
+  
+  (colin/leader-keys
+    "e" '(:ignore t :wk "Eshell/Evaluate")    
+    "e b" '(eval-buffer :wk "Evaluate elisp in buffer")
+    "e d" '(eval-defun :wk "Evaluate defun containing or after point")
+    "e e" '(eval-expression :wk "Evaluate and elisp expression")
+    "e h" '(counsel-esh-history :which-key "Eshell history")
+    "e l" '(eval-last-sexp :wk "Evaluate elisp expression before point")
+    "e r" '(eval-region :wk "Evaluate elisp in region")
+    "e s" '(eshell :which-key "Eshell"))
+  
+  (colin/leader-keys
+    "h" '(:ignore t :wk "Help")
+    "h f" '(describe-function :wk "Describe function")
+    "h t" '(load-theme :wk "Load theme")
+    "h v" '(describe-variable :wk "Describe variable")
+    ;;"h r r" '((lambda () (interactive) (load-file "~/.config/emacs/init.el")) :wk "Reload emacs config"))
+    "h r r" '(reload-init-file :wk "Reload emacs config"))
+  
+  (colin/leader-keys
+    "m" '(:ignore t :wk "Org")
+    "m a" '(org-agenda :wk "Org agenda")
+    "m e" '(org-export-dispatch :wk "Org export dispatch")
+    "m i" '(org-toggle-item :wk "Org toggle item")
+    "m t" '(org-todo :wk "Org todo")
+    "m B" '(org-babel-tangle :wk "Org babel tangle")
+    "m T" '(org-todo-list :wk "Org todo list"))
+  
+  (colin/leader-keys
+    "m b" '(:ignore t :wk "Tables")
+    "m b -" '(org-table-insert-hline :wk "Insert hline in table"))
+
+  (colin/leader-keys
+    "m d" '(:ignore t :wk "Date/deadline")
+    "m d t" '(org-time-stamp :wk "Org time stamp"))
+
+  (colin/leader-keys
+    "p" '(projectile-command-map :wk "Projectile"))
+
+  (colin/leader-keys
+    "t" '(:ignore t :wk "Toggle")
+    "t e" '(eshell-toggle :wk "Toggle eshell")
+    "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
+    "t n" '(neotree-toggle :wk "Toggle neotree file viewer")
+    "t t" '(visual-line-mode :wk "Toggle truncated lines")
+    "t v" '(vterm-toggle :wk "Toggle vterm"))
+
+  (colin/leader-keys
+    "w" '(:ignore t :wk "Windows")
+    ;; Window splits
+    "w c" '(evil-window-delete :wk "Close window")
+    "w n" '(evil-window-new :wk "New window")
+    "w s" '(evil-window-split :wk "Horizontal split window")
+    "w v" '(evil-window-vsplit :wk "Vertical split window")
+    ;; Window motions
+    "w h" '(evil-window-left :wk "Window left")
+    "w j" '(evil-window-down :wk "Window down")
+    "w k" '(evil-window-up :wk "Window up")
+    "w l" '(evil-window-right :wk "Window right")
+    "w w" '(evil-window-next :wk "Goto next window")
+    ;; Move Windows
+    "w H" '(buf-move-left :wk "Buffer move left")
+    "w J" '(buf-move-down :wk "Buffer move down")
+    "w K" '(buf-move-up :wk "Buffer move up")
+    "w L" '(buf-move-right :wk "Buffer move right"))
+
+  (colin/leader-keys
+    "s"   '(:ignore t :wk "Avy")
+    "s h" '(avy-org-goto-heading-timer :wk "Goto org heading")
+    "s f" '(avy-goto-char-timer :wk "Goto char timer"))
+  )
+   #+end_src
+
+* Language Support
+I have Emacs compiled with treesitter support enabled, needed for any *-ts modes.
+** Nix
+#+begin_src emacs-lisp
+(use-package nix-ts-mode :mode "\\.nix\\'")
+#+end_src
+* Theme / UI
+** Fonts
+#+begin_src emacs-lisp
+ (set-face-attribute 'default nil
+ 		    :family "FiraCode Nerd Font"
+ 		    :height 120
+ 		    :weight 'medium)
+
+(set-face-attribute 'fixed-pitch nil
+ 		    :family "Hack Nerd Font Mono"
+     	    :height 110
+  		    :weight 'medium)
+
+  ;; Makes commented text and keywords italics.
+  ;; This is working in emacsclient but not emacs.
+  ;; Your font must have an italic face available.
+  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+
+  ;; Uncomment the following line if line spacing needs adjusting.
+  ;; (setq-default line-spacing 0.12)
+#+end_src
+** Dracula Theme
+Install Dracula, my preferred color scheme
+#+begin_src emacs-lisp
+  (use-package dracula-theme :config (load-theme 'dracula t))
+#+end_src
+** Modeline
+I like to use the modeline from DOOM Emacs.
+#+begin_src emacs-lisp
+  (use-package doom-modeline :hook (after-init . doom-modeline-mode))
+#+end_src
+** Rainbow Mode
+Display the actual color as a background for any hex color value (ex. #ffffff).  The code block below enables rainbow-mode in all programming modes (prog-mode) as well as org-mode, which is why rainbow works in this document.  
+
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :diminish
+    :hook '((org-mode prog-mode) . rainbow-mode))
+#+end_src
+** Rainbow Delimiters
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :hook '((emacs-lisp-mode . rainbow-delimiters-mode)
+	  (racket-mode . rainbow-delimiters-mode)))
+#+end_src
+* Editor Tweaks
+Some misc tweaks I like to have.
+#+begin_src emacs-lisp
+(electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
+(electric-pair-mode 1)       ;; Turns on automatic parens pairing
+(global-hl-line-mode 1)      ;; Enables current line highlighting 
+
+;; The following prevents <> from auto-pairing when electric-pair-mode is on.
+;; Otherwise, org-tempo is broken when you try to <s TAB...
+(add-hook 'org-mode-hook (lambda ()
+			   (setq-local electric-pair-inhibit-predicate
+				       `(lambda (c)
+					  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
+
+(add-hook 'org-mode-hook 'display-line-numbers-mode)  ;; Only show line numbers in org and prog modes
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
+(global-visual-line-mode t)  ;; Enable truncated lines
+(menu-bar-mode -1)           ;; Disable the menu bar 
+(scroll-bar-mode -1)         ;; Disable the scroll bar
+(tool-bar-mode -1)           ;; Disable the tool bar
+(setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
+#+end_src
+
+* Org-Mode
+** General Org-Mode Tweaks
+#+begin_src emacs-lisp
+(setq org-return-follows-link t) ;; Enables links to be followed with out a mouse
+(add-hook 'org-mode-hook 'org-indent-mode)
+#+end_src
+** Capture Templates
+#+begin_src emacs-lisp
+#+end_src
+
+** TOC
+A utility to create table of contents in org and markdown
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :hook '((org-mode . toc-org-mode)
+  	  (markdown-mode . toc-org-mode)))
+#+end_src
+** Org-Tempo
+Org-tempo is not a separate package but a module within org that can be enabled.  Org-tempo allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
+
+| Typing the below + TAB | Expands to ...                          |
+|------------------------+-----------------------------------------|
+| <a                     | '#+BEGIN_EXPORT ascii' … '#+END_EXPORT  |
+| <c                     | '#+BEGIN_CENTER' … '#+END_CENTER'       |
+| <C                     | '#+BEGIN_COMMENT' … '#+END_COMMENT'     |
+| <e                     | '#+BEGIN_EXAMPLE' … '#+END_EXAMPLE'     |
+| <E                     | '#+BEGIN_EXPORT' … '#+END_EXPORT'       |
+| <h                     | '#+BEGIN_EXPORT html' … '#+END_EXPORT'  |
+| <l                     | '#+BEGIN_EXPORT latex' … '#+END_EXPORT' |
+| <q                     | '#+BEGIN_QUOTE' … '#+END_QUOTE'         |
+| <s                     | '#+BEGIN_SRC' … '#+END_SRC'             |
+| <v                     | '#+BEGIN_VERSE' … '#+END_VERSE'         |
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+#+end_src
+** Org-Bullets
+Make org mode look cleaner, but keep the astericks because I like them.
+#+begin_src emacs-lisp
+  (use-package org-bullets
+        :hook ((org-mode-hook . (lambda () (org-bullets-mode 1) )))
+        :config (setq org-bullets-bullet-list '("*")))
+#+end_src
+* Utilities
+** Avy
+Makes navigating around documents extremely easy and fast, like vim-easymotion.
+#+begin_src emacs-lisp
+(use-package avy
+  :config
+  (setq avy-background t)
+  (setq avy-all-windows nil))
+#+end_src
+** Magit
+#+begin_src emacs-lisp
+(use-package magit)
+#+end_src
+** Which-key
+#+begin_src emacs-lisp
+(use-package which-key
+  :init (which-key-mode 1)
+  :diminish
+  :config
+  (setq which-key-side-window-location 'bottom
+	which-key-sort-order #'which-key-key-order
+	which-key-allow-imprecise-window-fit nil
+	which-key-sort-uppercase-first nil
+	which-key-add-column-padding 1
+	which-key-max-display-columns nil
+	which-key-min-display-lines 6
+	which-key-side-window-slot -10
+	which-key-side-window-max-height 0.25
+	which-key-idle-delay 0.8
+	which-key-max-description-length 25
+	which-key-allow-imprecise-window-fit nil
+	which-key-separator " → " ))
+  #+end_src
+** Vterm
+Terminal emulator in Emacs
+#+begin_src emacs-lisp
+(use-package vterm)
+#+end_src

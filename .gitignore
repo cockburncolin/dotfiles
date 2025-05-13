@@ -1,2 +1,13 @@
+*#
 *~
+.#*
+.cache/
+auto-save-list/
+config.el
+elisp-autofmt-cache/
+eln-cache/
 hosts.yml
+recentf
+result
+straight/
+transient/

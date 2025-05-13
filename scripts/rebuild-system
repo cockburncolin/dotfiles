@@ -1,0 +1,16 @@
+#!/usr/bin/env nix-shell
+#! nix-shell -p bash -i bash
+set -e
+
+echo "Entering Nix directory"
+pushd $HOME/.config/nix
+
+git add .
+
+echo "Rebuilding system..."
+
+sudo nixos-rebuild switch --flake . --upgrade
+
+popd
+
+notify-send -e "Nixos Rebuilt"
