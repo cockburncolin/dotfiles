@@ -30,6 +30,7 @@ in {
           device = "nodev";
           useOSProber = true;
           configurationLimit = 50;
+          theme = "${pkgs.grub-dracula}/grub/themes/dracula";
         };
       };
 

@@ -9,7 +9,10 @@
   - [[#general-keybindings][General Keybindings]]
 - [[#language-support][Language Support]]
   - [[#nix][Nix]]
+  - [[#racket][Racket]]
+  - [[#yuck][Yuck]]
 - [[#theme--ui][Theme / UI]]
+  - [[#dashboard][Dashboard]]
   - [[#fonts][Fonts]]
   - [[#dracula-theme][Dracula Theme]]
   - [[#modeline][Modeline]]
@@ -24,13 +27,16 @@
   - [[#org-bullets][Org-Bullets]]
 - [[#utilities][Utilities]]
   - [[#avy][Avy]]
+  - [[#neotree][Neotree]]
   - [[#magit][Magit]]
+  - [[#tree-sit-auto][Tree-sit Auto]]
   - [[#which-key][Which-key]]
   - [[#vterm][Vterm]]
 
 *  Notes
 I don't use a traditional Emacs package manager, I use nix to manage all my packages.  If not using nix use a package manager such as straight. 
 
+After adding new packages a system rebuild and restart of the Emacs daemon is required.
 
 *  Packages to load first
 These packages need to be loaded before anything else.
@@ -168,7 +174,40 @@ I have Emacs compiled with treesitter support enabled, needed for any *-ts modes
 #+begin_src emacs-lisp
 (use-package nix-ts-mode :mode "\\.nix\\'")
 #+end_src
+** Racket
+#+begin_src emacs-lisp
+(use-package racket-mode :mode "\\.rkt\\'")
+;; add racket support to org-babel, package isn't in melpa, I've packaged it
+;; in my Nix config.
+(use-package ob-racket
+  :after org
+  :config
+  (add-hook 'ob-racket-pre-runtime-library-load-hook
+	      #'ob-racket-raco-make-runtime-library))
+#+end_src
+** Yuck
+Yuck is the configuration language for [[https://github.com/elkowar/eww][EWW]].
+#+begin_src emacs-lisp
+(use-package yuck-mode :mode "\\.yuck\\'")
+#+end_src
 * Theme / UI
+** Dashboard
+#+begin_src emacs-lisp
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-center-content t)
+  (setq dashboard-vertically-center-content t)
+  (setq dashboard-items '((recents  . 5)
+			  (projects . 5)
+			  (agenda   . 5)))
+  (setq dashboard-display-icons-p t)
+  (setq dashboard-icon-type 'nerdicons)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-startup-banner (expand-file-name "images/bribe1.png" user-emacs-directory))
+  (setq initial-buffer-choice (lambda () (get-buffer-create dashboard-buffer-name))))
+#+end_src
 ** Fonts
 #+begin_src emacs-lisp
  (set-face-attribute 'default nil
@@ -211,12 +250,15 @@ Display the actual color as a background for any hex color value (ex. #ffffff). 
 ** Rainbow Delimiters
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
-  :hook '((emacs-lisp-mode . rainbow-delimiters-mode)
-	  (racket-mode . rainbow-delimiters-mode)))
+  :hook '((racket-mode yuck-mode emacs-lisp-mode ) . rainbow-delimiters-mode))
 #+end_src
 * Editor Tweaks
 Some misc tweaks I like to have.
 #+begin_src emacs-lisp
+(require 'recentf)
+(recentf-mode t)
+(setq recentf-max-saved-items 20)
+
 (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
 (electric-pair-mode 1)       ;; Turns on automatic parens pairing
 (global-hl-line-mode 1)      ;; Enables current line highlighting 
@@ -289,9 +331,20 @@ Makes navigating around documents extremely easy and fast, like vim-easymotion.
   (setq avy-background t)
   (setq avy-all-windows nil))
 #+end_src
+** Neotree
+#+begin_src emacs-lisp
+(use-package neotree
+  :config
+  (setq neo-theme 'nerd-icons))
+#+end_src
 ** Magit
 #+begin_src emacs-lisp
 (use-package magit)
+#+end_src
+** Tree-sit Auto
+Automatically applies treesitter modes if the are installed.
+#+begin_src emacs-isp
+(use-package treesit-auto :config (global-tree-sit-auto-mode))
 #+end_src
 ** Which-key
 #+begin_src emacs-lisp

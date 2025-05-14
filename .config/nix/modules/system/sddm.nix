@@ -2,7 +2,6 @@
   lib,
   pkgs,
   config,
-  sddm-dracula,
   ...
 }: let
   cfg = config.custom.sddm;
@@ -18,7 +17,12 @@ in {
       package = lib.mkForce pkgs.libsForQt5.sddm;
       autoNumlock = true;
       wayland.enable = true;
-      theme = sddm-dracula;
+      theme = "${pkgs.sddm-dracula}/share/sddm/themes/sddm-dracula";
+      extraPackages = with pkgs; [
+        libsForQt5.qtgraphicaleffects
+        libsForQt5.qtquickcontrols2
+        libsForQt5.qtsvg
+      ];
     };
   };
 }

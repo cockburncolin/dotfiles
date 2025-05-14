@@ -19,10 +19,9 @@
       user.enable = lib.mkDefault true;
     };
 
-
     age = {
       secrets.rootpw.file = ../../secrets/rootpw.age;
-      identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     };
 
     users.users.root.hashedPasswordFile = config.age.secrets.rootpw.path;
@@ -40,10 +39,10 @@
       man-pages-posix
       inputs.agenix.packages.${system}.default
     ];
-     # include man pages, why not by default I don't know...
-    documentation = { 
+    # include man pages, why not by default I don't know...
+    documentation = {
       dev.enable = true;
-      man.generateCaches =true;
+      man.generateCaches = true;
       nixos.includeAllModules = true;
     };
 
@@ -52,7 +51,7 @@
         additions
         modifications
         stable-packages
-        emacs
+        inputs.emacs-overlay.overlay
       ];
 
       config = {

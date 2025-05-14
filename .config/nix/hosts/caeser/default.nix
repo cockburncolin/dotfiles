@@ -13,6 +13,7 @@
     custom = {
       emacs.enable = true;
       games.enable = true;
+      sddm.enable = true;
       wifi.enable = true;
       wm.enable = true;
     };
