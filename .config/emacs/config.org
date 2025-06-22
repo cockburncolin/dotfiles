@@ -28,6 +28,7 @@
 - [[#utilities][Utilities]]
   - [[#aggressive-indent][Aggressive Indent]]
   - [[#avy][Avy]]
+  - [[#autex][Autex]]
   - [[#company][Company]]
   - [[#dirvish][Dirvish]]
   - [[#jinx][Jinx]]
@@ -358,6 +359,10 @@ Makes navigating around documents extremely easy and fast, like vim-easymotion.
   (setq avy-background t)
   (setq avy-all-windows nil))
 #+end_src
+** Autex
+#+begin_src emacs-lisp
+(use-package auctex)
+#+end_src
 ** Company
 Completion engine for Emacs
 #+begin_src emacs-lisp
@@ -493,12 +498,15 @@ Terminal emulator in Emacs
 ** Resume Doc Class
 #+begin_src emacs-lisp
 (with-eval-after-load 'ox-latex
-  (add-to-list 'org-latex-classes
-               '("customresume"
-		 "\\documentclass{customresume}"
-		 ("\\section{%s}" . "\\section*{%s}")
-		 ("\\subsection{%s}" . "\\subsection*{%s}")
-		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-		 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+(add-to-list 'org-latex-classes
+             '("org-plain-latex"
+               "\\documentclass{article}
+           [NO-DEFAULT-PACKAGES]
+           [PACKAGES]
+           [EXTRA]"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+end_src
