@@ -16,8 +16,9 @@ export TYPEWRITTEN_SYMBOL="󰘧"
 export TYPEWRITTEN_ARROW_SYMBOL="➜"
 
 alias cat=bat
-alias vim=nvim
+alias ec=emacsclient -r -n -a nvim
 alias ls=exa --colour=always --icons=always --classify=always
+alias vim=nvim
 
 zinit light Aloxaf/fzf-tab
 zinit light MichaelAquilina/zsh-you-should-use
