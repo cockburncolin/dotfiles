@@ -6,15 +6,17 @@
 }: let
   cfg = config.custom.wm;
 in {
+  imports = [./eww.nix];
+
   options.custom.wm = {
     enable = lib.mkEnableOption "Enable GUI";
   };
 
   config = lib.mkIf cfg.enable {
+    custom.eww.enable = lib.mkDefault true;
     environment.systemPackages = with pkgs; [
       tmux
       hyprpaper
-      eww
       mako # notification system developed by swaywm maintainer
       sddm-dracula
       wl-clipboard
@@ -41,8 +43,9 @@ in {
         after = ["graphical-session.target"];
         wantedBy = ["graphical-session.target"];
         serviceConfig = {
-          Type = "simple";
+          Type = "exec";
           ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
+          RemainAfterExit = "yes";
         };
       };
     };

@@ -9,6 +9,7 @@
 }: {
   imports = with inputs; [
     ../../modules
+    ./shared-drives.nix
     disko.nixosModules.disko
     agenix.nixosModules.default
   ];

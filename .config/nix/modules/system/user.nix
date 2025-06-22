@@ -64,7 +64,12 @@ in {
     users.users.${cfg.username} = {
       isNormalUser = true;
       hashedPasswordFile = config.age.secrets.userpw.path;
-      extraGroups = ["wheel"] ++ cfg.additionalGroups;
+      extraGroups =
+        [
+          "wheel"
+          "dialout" # needed for serial connections
+        ]
+        ++ cfg.additionalGroups;
       shell = pkgs.zsh;
     };
   };

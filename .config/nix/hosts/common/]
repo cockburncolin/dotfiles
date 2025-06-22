@@ -1,0 +1,26 @@
+{
+  fileSystems = {
+    "/mnt/nfs" = {
+      device = "192.168.1.10:/volume2/Media";
+      fsType = "nfs";
+      options = [
+        "x-systemd.automount"
+        "noauto"
+        "x-systemd.ide-timeout=600"
+      ];
+    };
+
+    "/mnt/ereader" = {
+      device = "";
+      fsType = "";
+      options = [
+        "noauto"
+        "uid=colin"
+        "gid=users"
+      ];
+    };
+  };
+
+  # optional, but ensures rpc-statsd is running for on demand mounting
+  boot.supportedFilesystems = ["nfs"];
+}

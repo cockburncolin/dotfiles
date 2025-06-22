@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
   };
 
   buildInputs = [racket emacs];
-  
+
   buildPhase = ''
     ${racket}/bin/raco make ob-racket-runtime.rkt
   '';

@@ -13,9 +13,8 @@ in {
   config = lib.mkIf cfg.enable {
     services.emacs = {
       enable = true;
-      install = true;
-      defaultEditor = true;
       package = pkgs.emacsWithPackagesFromUsePackage {
+        # Emacs package from overlay
         config = /home/colin/.config/emacs/config.org;
         package = pkgs.emacs-gtk;
         alwaysEnsure = true;
@@ -31,5 +30,27 @@ in {
           ];
       };
     };
+
+    # Additional packages to install
+    environment.systemPackages = with pkgs; [
+      hunspell # spell check + dictionaries
+      hunspellDicts.en_CA
+      hunspellDicts.en_US
+      ghostscript # for pdfs in docview-mode
+      (pkgs.texlive.combine {
+        inherit
+          (pkgs.texlive)
+          scheme-basic
+          dvisvgm
+          dvipng
+          wrapfig
+          amsmath
+          ulem
+          hyperref
+          capt-of
+          moderncv
+          ;
+      })
+    ];
   };
 }

@@ -1,15 +1,16 @@
-#+TITLE: Colin's Emacs config
+#+TITLE: Colin's Emacs Config
 #+STARTUP: showall
 #+PROPERTY: header-args:emacs-lisp :tangle yes
 
 * Table of Contents :toc:
--  [[#notes][Notes]]
--  [[#packages-to-load-first][Packages to load first]]
+- [[#notes][Notes]]
+- [[#packages-to-load-first][Packages to load first]]
   - [[#load-evil-mode][Load Evil Mode]]
   - [[#general-keybindings][General Keybindings]]
 - [[#language-support][Language Support]]
   - [[#nix][Nix]]
   - [[#racket][Racket]]
+  - [[#clojure][Clojure]]
   - [[#yuck][Yuck]]
 - [[#theme--ui][Theme / UI]]
   - [[#dashboard][Dashboard]]
@@ -24,21 +25,31 @@
   - [[#capture-templates][Capture Templates]]
   - [[#toc][TOC]]
   - [[#org-tempo][Org-Tempo]]
-  - [[#org-bullets][Org-Bullets]]
 - [[#utilities][Utilities]]
+  - [[#aggressive-indent][Aggressive Indent]]
   - [[#avy][Avy]]
+  - [[#company][Company]]
+  - [[#dirvish][Dirvish]]
+  - [[#jinx][Jinx]]
+  - [[#golden-ratio][Golden Ratio]]
   - [[#neotree][Neotree]]
   - [[#magit][Magit]]
+  - [[#popper][Popper]]
+  - [[#projectile][Projectile]]
   - [[#tree-sit-auto][Tree-sit Auto]]
+  - [[#yasnippet][Yasnippet]]
   - [[#which-key][Which-key]]
+  - [[#vertico][Vertico]]
   - [[#vterm][Vterm]]
+- [[#latex-options][LaTex Options]]
+  - [[#resume-doc-class][Resume Doc Class]]
 
-*  Notes
+* Notes
 I don't use a traditional Emacs package manager, I use nix to manage all my packages.  If not using nix use a package manager such as straight. 
 
 After adding new packages a system rebuild and restart of the Emacs daemon is required.
 
-*  Packages to load first
+* Packages to load first
 These packages need to be loaded before anything else.
 #+begin_src emacs-lisp
 (setq use-package-always-ensure t)
@@ -115,24 +126,22 @@ These packages need to be loaded before anything else.
     "h r r" '(reload-init-file :wk "Reload emacs config"))
   
   (colin/leader-keys
-    "m" '(:ignore t :wk "Org")
-    "m a" '(org-agenda :wk "Org agenda")
-    "m e" '(org-export-dispatch :wk "Org export dispatch")
-    "m i" '(org-toggle-item :wk "Org toggle item")
-    "m t" '(org-todo :wk "Org todo")
-    "m B" '(org-babel-tangle :wk "Org babel tangle")
-    "m T" '(org-todo-list :wk "Org todo list"))
+    "o" '(:ignore t :wk "Org")
+    "o a" '(org-agenda :wk "Org agenda")
+    "o e" '(org-export-dispatch :wk "Org export dispatch")
+    "o i" '(org-toggle-item :wk "Org toggle item")
+    "o t" '(org-todo :wk "Org todo")
+    "o B" '(org-babel-tangle :wk "Org babel tangle")
+    "o T" '(org-todo-list :wk "Org todo list")
+    "o c" '(org-capture :wk "Org Capture"))
   
   (colin/leader-keys
-    "m b" '(:ignore t :wk "Tables")
-    "m b -" '(org-table-insert-hline :wk "Insert hline in table"))
+    "o b" '(:ignore t :wk "Tables")
+    "o b -" '(org-table-insert-hline :wk "Insert hline in table"))
 
   (colin/leader-keys
-    "m d" '(:ignore t :wk "Date/deadline")
-    "m d t" '(org-time-stamp :wk "Org time stamp"))
-
-  (colin/leader-keys
-    "p" '(projectile-command-map :wk "Projectile"))
+    "o d" '(:ignore t :wk "Date/deadline")
+    "o d t" '(org-time-stamp :wk "Org time stamp"))
 
   (colin/leader-keys
     "t" '(:ignore t :wk "Toggle")
@@ -140,7 +149,7 @@ These packages need to be loaded before anything else.
     "t l" '(display-line-numbers-mode :wk "Toggle line numbers")
     "t n" '(neotree-toggle :wk "Toggle neotree file viewer")
     "t t" '(visual-line-mode :wk "Toggle truncated lines")
-    "t v" '(vterm-toggle :wk "Toggle vterm"))
+    "t v" '(vterm :wk "Toggle vterm"))
 
   (colin/leader-keys
     "w" '(:ignore t :wk "Windows")
@@ -169,7 +178,7 @@ These packages need to be loaded before anything else.
    #+end_src
 
 * Language Support
-I have Emacs compiled with treesitter support enabled, needed for any *-ts modes.
+I have Emacs compiled with tree-sitter support enabled, needed for any *-ts modes.
 ** Nix
 #+begin_src emacs-lisp
 (use-package nix-ts-mode :mode "\\.nix\\'")
@@ -183,7 +192,12 @@ I have Emacs compiled with treesitter support enabled, needed for any *-ts modes
   :after org
   :config
   (add-hook 'ob-racket-pre-runtime-library-load-hook
-	      #'ob-racket-raco-make-runtime-library))
+	    #'ob-racket-raco-make-runtime-library))
+#+end_src
+** Clojure
+Install both the Clojure mode and the Org Babel package
+#+begin_src emacs-lisp
+(use-package clojure-ts-mode :mode "\\.clj\\'")
 #+end_src
 ** Yuck
 Yuck is the configuration language for [[https://github.com/elkowar/eww][EWW]].
@@ -210,27 +224,34 @@ Yuck is the configuration language for [[https://github.com/elkowar/eww][EWW]].
 #+end_src
 ** Fonts
 #+begin_src emacs-lisp
- (set-face-attribute 'default nil
- 		    :family "FiraCode Nerd Font"
- 		    :height 120
+(set-face-attribute 'default nil
+		    :family "FiraCode Nerd Font"
+ 		    :height 130
  		    :weight 'medium)
 
 (set-face-attribute 'fixed-pitch nil
- 		    :family "Hack Nerd Font Mono"
-     	    :height 110
+ 		    :family "FiraCode Nerd Font"
+     		    :height 110
   		    :weight 'medium)
 
-  ;; Makes commented text and keywords italics.
-  ;; This is working in emacsclient but not emacs.
-  ;; Your font must have an italic face available.
-  (set-face-attribute 'font-lock-comment-face nil :slant 'italic)
-  (set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
+;; Makes commented text and keywords italics.
+;; This is working in emacsclient but not emacs.
+;; Your font must have an italic face available.
+(set-face-attribute 'font-lock-comment-face nil :slant 'italic)
+(set-face-attribute 'font-lock-keyword-face nil :slant 'italic)
 
-  ;; Uncomment the following line if line spacing needs adjusting.
-  ;; (setq-default line-spacing 0.12)
+;; Uncomment the following line if line spacing needs adjusting.
+;; (setq-default line-spacing 0.12)
+
+;; Set keys for manipulating font size
+(global-set-key (kbd "C-=") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "<C-wheel-up>") 'text-scale-increase)
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease)
+
 #+end_src
 ** Dracula Theme
-Install Dracula, my preferred color scheme
+Install Dracula, my preferred colour scheme
 #+begin_src emacs-lisp
   (use-package dracula-theme :config (load-theme 'dracula t))
 #+end_src
@@ -240,7 +261,7 @@ I like to use the modeline from DOOM Emacs.
   (use-package doom-modeline :hook (after-init . doom-modeline-mode))
 #+end_src
 ** Rainbow Mode
-Display the actual color as a background for any hex color value (ex. #ffffff).  The code block below enables rainbow-mode in all programming modes (prog-mode) as well as org-mode, which is why rainbow works in this document.  
+Display the actual colour as a background for any hex colour value (ex. #ffffff).  The code block below enables rainbow-mode in all programming modes (prog-mode) as well as org-mode, which is why rainbow works in this document.  
 
 #+begin_src emacs-lisp
   (use-package rainbow-mode
@@ -248,9 +269,11 @@ Display the actual color as a background for any hex color value (ex. #ffffff). 
     :hook '((org-mode prog-mode) . rainbow-mode))
 #+end_src
 ** Rainbow Delimiters
+Enables colour matching parentheses for Lisp languages.
 #+begin_src emacs-lisp
 (use-package rainbow-delimiters
-  :hook '((racket-mode yuck-mode emacs-lisp-mode ) . rainbow-delimiters-mode))
+  :hook '(prog-mode . rainbow-delimiters-mode)
+  )
 #+end_src
 * Editor Tweaks
 Some misc tweaks I like to have.
@@ -258,7 +281,7 @@ Some misc tweaks I like to have.
 (require 'recentf)
 (recentf-mode t)
 (setq recentf-max-saved-items 20)
-
+(setq enable-local-eval t)
 (electric-indent-mode -1)    ;; Turn off the weird indenting that Emacs does by default.
 (electric-pair-mode 1)       ;; Turns on automatic parens pairing
 (global-hl-line-mode 1)      ;; Enables current line highlighting 
@@ -270,7 +293,7 @@ Some misc tweaks I like to have.
 				       `(lambda (c)
 					  (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 
-(add-hook 'org-mode-hook 'display-line-numbers-mode)  ;; Only show line numbers in org and prog modes
+;; (add-hook 'org-mode-hook 'display-line-numbers-mode)  ;; Only show line numbers in org and prog modes
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (global-auto-revert-mode t)  ;; Automatically show changes if the file has changed
 (global-visual-line-mode t)  ;; Enable truncated lines
@@ -278,24 +301,29 @@ Some misc tweaks I like to have.
 (scroll-bar-mode -1)         ;; Disable the scroll bar
 (tool-bar-mode -1)           ;; Disable the tool bar
 (setq org-edit-src-content-indentation 0) ;; Set src block automatic indent to 0 instead of 2.
+(setq vc-follow-symlinks t)  ;; Always follow synlinks to git files
 #+end_src
-
 * Org-Mode
 ** General Org-Mode Tweaks
 #+begin_src emacs-lisp
 (setq org-return-follows-link t) ;; Enables links to be followed with out a mouse
+(setq org-hide-emphasis-markers t)
 (add-hook 'org-mode-hook 'org-indent-mode)
+(setq org-agenda-files '("~/org/todo.org"))
 #+end_src
 ** Capture Templates
 #+begin_src emacs-lisp
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+	 "* TODO %?\n %i\n %a")))
 #+end_src
 
 ** TOC
 A utility to create table of contents in org and markdown
 #+begin_src emacs-lisp
-  (use-package toc-org
-    :hook '((org-mode . toc-org-mode)
-  	  (markdown-mode . toc-org-mode)))
+(use-package toc-org
+  :hook '((org-mode . toc-org-mode)
+	  (markdown-mode . toc-org-mode)))
 #+end_src
 ** Org-Tempo
 Org-tempo is not a separate package but a module within org that can be enabled.  Org-tempo allows for '<s' followed by TAB to expand to a begin_src tag.  Other expansions available include:
@@ -315,14 +343,13 @@ Org-tempo is not a separate package but a module within org that can be enabled.
 #+begin_src emacs-lisp
   (require 'org-tempo)
 #+end_src
-** Org-Bullets
-Make org mode look cleaner, but keep the astericks because I like them.
-#+begin_src emacs-lisp
-  (use-package org-bullets
-        :hook ((org-mode-hook . (lambda () (org-bullets-mode 1) )))
-        :config (setq org-bullets-bullet-list '("*")))
-#+end_src
 * Utilities
+** Aggressive Indent
+#+begin_src emacs-lisp
+(use-package aggressive-indent
+  :config
+  (global-aggressive-indent-mode 1))
+#+end_src
 ** Avy
 Makes navigating around documents extremely easy and fast, like vim-easymotion.
 #+begin_src emacs-lisp
@@ -331,6 +358,36 @@ Makes navigating around documents extremely easy and fast, like vim-easymotion.
   (setq avy-background t)
   (setq avy-all-windows nil))
 #+end_src
+** Company
+Completion engine for Emacs
+#+begin_src emacs-lisp
+(use-package company
+  :config
+  (use-package company-c-headers
+    :config
+    (add-to-list 'company-backends 'company-c-headers))
+  (global-company-mode 1))
+#+end_src
+** Dirvish
+#+begin_src emacs-lisp
+(use-package dirvish)
+#+end_src
+** Jinx
+Spell check for Emacs
+#+begin_src emacs-lisp
+(use-package jinx
+  :hook '(((text-mode org-mode latex-mode) . jinx-mode))
+  :config (setq jinx-languages "en_CA"))
+#+end_src
+** Golden Ratio
+Golden ratio automatically resizes windows so that the active window has a size convenient for editing.
+#+begin_src emacs-lisp
+(use-package golden-ratio
+  :config
+  (setq golden-ratio-auto-scale t)
+  (golden-ratio-mode 1))
+#+end_src
+
 ** Neotree
 #+begin_src emacs-lisp
 (use-package neotree
@@ -341,11 +398,49 @@ Makes navigating around documents extremely easy and fast, like vim-easymotion.
 #+begin_src emacs-lisp
 (use-package magit)
 #+end_src
-** Tree-sit Auto
-Automatically applies treesitter modes if the are installed.
-#+begin_src emacs-isp
-(use-package treesit-auto :config (global-tree-sit-auto-mode))
+** Popper
+#+begin_src emacs-lisp
+(use-package popper
+  :init
+  (setq popper-reference-buffers
+	'("\\*Messages\\*"
+	  "Output\\*$"
+	  help-mode
+	  compilation-mode
+	  "^\\*eshell.*\\*" eshell-mode
+	  "^\\*shell.*\\*" shell-mode
+	  "^\\*term.*\\*" term-mode
+	  "^\\*vterm\\*" vterm-mode)))
 #+end_src
+** Projectile
+Projectile is a project interaction library for Emacs. It provides a powerful set of features operating at the project level, as well as simple heuristics to identify projects.
+#+begin_src emacs-lisp
+(use-package projectile
+  :custom
+  (projectile-project-search-path '("~/Projects"))
+  :config
+  (projectile-mode 1)
+  (colin/leader-keys
+    "p" '(projectile-command-map :wk "Projectile"))) ;; Projectile provides a map already, saving us some work
+#+end_src
+** Tree-sit Auto
+Automatically applies tree-sitter modes if the are installed.
+#+begin_src emacs-lisp
+(use-package treesit-auto
+  :config (global-treesit-auto-mode))
+  #+end_src
+** Yasnippet
+Yasnippet provides templating for Emacs, integrates with company mode.
+#+begin_src emacs-lisp
+(use-package yasnippet
+  :config
+  (setq yas-snippet-dirs '("~/.config/emacs/snippets"))
+  (yas-global-mode 1)
+  (colin/leader-keys
+    "y"   '(:ignore t :wk "Yasnippet")
+    "y n" '(yas-new-snippet :wk "New Snippet")
+    "y e" '(yas-visit-from-menu :wk "Visit snippet from menu")))
+#+end_src 
 ** Which-key
 #+begin_src emacs-lisp
 (use-package which-key
@@ -366,8 +461,44 @@ Automatically applies treesitter modes if the are installed.
 	which-key-allow-imprecise-window-fit nil
 	which-key-separator " → " ))
   #+end_src
+** Vertico
+A completion engine UI for Emacs.
+#+begin_src emacs-lisp
+(use-package vertico
+  :custom
+  (enable-recursive-minibuffers t)
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt))
+  :init (vertico-mode 1))
+
+;; Package to save history across restarts
+(use-package savehist
+  :init (savehist-mode 1))
+
+;; Use orderless completion style
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion--category-override '((file (styles partial-completion)))))
+#+end_src
 ** Vterm
 Terminal emulator in Emacs
 #+begin_src emacs-lisp
 (use-package vterm)
+#+end_src
+
+* LaTex Options
+** Resume Doc Class
+#+begin_src emacs-lisp
+(with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+               '("customresume"
+		 "\\documentclass{customresume}"
+		 ("\\section{%s}" . "\\section*{%s}")
+		 ("\\subsection{%s}" . "\\subsection*{%s}")
+		 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+		 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+		 ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
 #+end_src

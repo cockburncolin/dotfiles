@@ -6,7 +6,9 @@
 }: let
   cfg = config.custom.games;
 in {
-  imports = [];
+  imports = [
+    ./craft.nix
+  ];
 
   options.custom.games = {
     enable = lib.mkEnableOption "Install game launchers";
