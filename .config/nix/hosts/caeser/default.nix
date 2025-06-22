@@ -15,6 +15,7 @@
       emacs.enable = true;
       games.enable = true;
       games.craft.enable = true;
+      fonts.enable = true;
       sddm.enable = true;
       wifi.enable = true;
       wm.enable = true;

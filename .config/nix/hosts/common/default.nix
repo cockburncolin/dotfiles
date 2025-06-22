@@ -18,6 +18,7 @@
     custom = {
       uefi.enable = lib.mkDefault true;
       user.enable = lib.mkDefault true;
+      fonts.enable = lib.mkIf config.custom.wm.enable (lib.mkDefault true);
     };
 
     age = {
@@ -26,9 +27,6 @@
     };
 
     users.users.root.hashedPasswordFile = config.age.secrets.rootpw.path;
-
-    # default fonts to install
-    fonts.packages = [] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
 
     # default system wide packages to install
     environment.systemPackages = with pkgs; [

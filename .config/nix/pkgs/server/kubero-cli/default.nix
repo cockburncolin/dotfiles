@@ -42,7 +42,7 @@ buildGoModule rec {
 
   meta = with lib; {
     description = "Command line client for Kubero";
-    license = licenses.gpl3Only;
+    license = licenses.asl20;
     homepage = "https://github.com/kubero-dev/kubero-cli";
   };
 }
