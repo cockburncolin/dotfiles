@@ -26,6 +26,7 @@ zinit light zsh-users/zsh-autosuggestions
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light reobin/typewritten
+zinit light ianthehenry/zsh-autoquoter
 
 zinit snippet OMZP::command-not-found
 zinit snippet OMZP::git
@@ -40,6 +41,8 @@ zinit cdreplay -q
 
 # disable beeps
 unsetopt BEEP
+
+ZAQ_PREFIXES=('mpv' 'yt-dlp')
 
 # history settings
 HISTSIZE=2500
