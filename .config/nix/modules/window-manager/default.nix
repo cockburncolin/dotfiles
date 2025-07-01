@@ -49,7 +49,7 @@ in {
           RemainAfterExit = "yes";
         };
       };
-      
+
       hyprshade = {
         enable = true;
         description = "Hyprland shader configuration tool";

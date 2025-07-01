@@ -11,12 +11,13 @@
 
     # Custom modules
     custom = {
-      userspace.bluetooth.enable = true;
       emacs.enable = true;
-      games.enable = true;
-      games.craft.enable = true;
       fonts.enable = true;
+      games.craft.enable = true;
+      games.enable = true;
+      media.kodi.enable = true;
       sddm.enable = true;
+      userspace.bluetooth.enable = true;
       wifi.enable = true;
       wm.enable = true;
     };

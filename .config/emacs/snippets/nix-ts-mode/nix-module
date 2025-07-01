@@ -8,7 +8,7 @@ let
 in
 {
 	options = {
-		$1.enable = lib.mkEnableOption "$2";
+		custom.$1.enable = lib.mkEnableOption "$2";
 	};
 
 	config = lib.mkIf cfg.enable {
