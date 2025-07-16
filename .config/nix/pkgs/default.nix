@@ -1,8 +1,9 @@
 pkgs: let
-  emacsPkgs = import ./emacs {inherit pkgs;};
-  fontPkgs = import ./fonts {inherit pkgs;};
-  scriptPkgs = import ./scripts {inherit pkgs;};
-  serverPkgs = import ./server {inherit pkgs;};
-  themePkgs = import ./themes {inherit pkgs;};
+  qt5 = pkgs.libsForQt5;
 in
-  emacsPkgs // fontPkgs // scriptPkgs // serverPkgs // themePkgs
+{
+  dm-fonts = pkgs.callPackage ./fonts/dm-fonts {};
+  kubero-cli = pkgs.callPackage ./server/kubero-cli {};
+  grub-dracula = pkgs.callPackage ./themes/grub-dracula {};
+  sddm-dracula = qt5.callPackage ./themes/sddm-dracula {};
+}

@@ -33,7 +33,6 @@
       clang-tools
       cmake
       glibcInfo
-      get-aacs-keys
       man-pages
       man-pages-posix
       inputs.agenix.packages.${system}.default

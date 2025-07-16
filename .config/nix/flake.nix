@@ -19,6 +19,7 @@
   outputs = {
     self,
     nixpkgs,
+    flake-utils,
     ...
   } @ inputs: let
     inherit (self) outputs;
