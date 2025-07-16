@@ -17,6 +17,7 @@ export TYPEWRITTEN_ARROW_SYMBOL="➜"
 
 alias cat=bat
 alias ec=emacsclient -r -n -a nvim
+alias la=exa --colour=always --icons=always --classify=always -lAh
 alias ls=exa --colour=always --icons=always --classify=always
 alias vim=nvim
 
@@ -42,7 +43,7 @@ zinit cdreplay -q
 # disable beeps
 unsetopt BEEP
 
-ZAQ_PREFIXES=('mpv' 'yt-dlp')
+ZAQ_PREFIXES=('mpv *http*' 'yt-dlp')
 
 # history settings
 HISTSIZE=2500
@@ -50,6 +51,7 @@ HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
 setopt appendhistory
+setopt extended_glob
 setopt sharehistory
 setopt hist_ignore_space
 setopt hist_ignore_all_dups
