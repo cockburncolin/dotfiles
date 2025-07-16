@@ -1,8 +1,9 @@
-{pkgs, ...}: {
-  ob-racket = pkgs.callPackage ./emacs/ob-racket {};
-  get-aacs-keys = pkgs.callPackage ./scripts/get-aacs-keys {};
+pkgs: let
+  qt5 = pkgs.libsForQt5;
+in
+{
   dm-fonts = pkgs.callPackage ./fonts/dm-fonts {};
   kubero-cli = pkgs.callPackage ./server/kubero-cli {};
-  grub-dracula = pkgs.callPackage ./themes/grub/grub-dracula {};
-  sddm-dracula = pkgs.libsForQt5.callPackage ./themes/sddm-dracula {};
+  grub-dracula = pkgs.callPackage ./themes/grub-dracula {};
+  sddm-dracula = qt5.callPackage ./themes/sddm-dracula {};
 }

@@ -18,7 +18,7 @@
 		       rainbow-delimiters rainbow-mode toc-org
 		       tree-sitter-langs treesit-auto use-package
 		       vertico vertico-posframe vterm which-key
-		       yasnippet yuck-mode)))
+		       yasnippet yuck-mode zig-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -14,16 +14,12 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    emacs-overlay = {
-      url = "github:nix-community/emacs-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
     self,
     nixpkgs,
+    flake-utils,
     ...
   } @ inputs: let
     inherit (self) outputs;
@@ -36,28 +32,28 @@
     ];
     forAllSystems = nixpkgs.lib.genAttrs systems;
   in {
-    packages = forAllSystems (system: import ../.config/nix/pkgs nixpkgs.legacyPackages.${system});
-    overlays = import ../.config/nix/overlays {inherit inputs;};
+    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
+    overlays = import ./overlays {inherit inputs;};
     nixosConfigurations = {
       caeser = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
-        modules = [../.config/nix/hosts/caeser];
+        modules = [./hosts/caeser];
       };
       brutus = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
-        modules = [../.config/nix/hosts/brutus];
+        modules = [./hosts/brutus];
       };
       nix-node01 = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
-        modules = [../.config/nix/hosts/nix-node01];
+        modules = [./hosts/nix-node01];
       };
       nix-node02 = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
-        modules = [../.config/nix/hosts/nix-node02];
+        modules = [./hosts/nix-node02];
       };
       nix-node03 = nixpkgs.lib.nixosSystem {
         specialArgs = {inherit inputs outputs;};
-        modules = [../.config/nix/hosts/nix-node03];
+        modules = [./hosts/nix-node03];
       };
     };
   };

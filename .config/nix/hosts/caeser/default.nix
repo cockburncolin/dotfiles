@@ -11,11 +11,16 @@
 
     # Custom modules
     custom = {
-      emacs.enable = true;
       fonts.enable = true;
       games.craft.enable = true;
       games.enable = true;
-      media.kodi.enable = true;
+      utils = {
+        packetTracer.enable = true;
+      };
+      media = {
+        kodi.enable = false;
+        bluray.enable = true;
+      };
       sddm.enable = true;
       userspace.bluetooth.enable = true;
       wifi.enable = true;

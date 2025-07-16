@@ -1,13 +1,30 @@
 (deflisten workspaces 
 	   :initial "[]"
-	   "~/.config/eww/scripts/hyprland-get-workspaces.sh")
+	   "bash ~/.config/eww/scripts/hyprland-get-workspaces.sh")
 
-(deflisten current-workspace
+(deflisten current_workspace
 	   :initial "1"
-	   "~/.config/eww/scripts/hyprland-get-active-workspace.sh")
+	   "bash ~/.config/eww/scripts/hyprland-get-active-workspace.sh")
 
 (defpoll time_poll :interval "15s" "date '+%I:%M %P - %b %d %Y'")
 
+;; Workspaces
+(defwidget workspaces-widget []
+	   (box
+	    :class "workspaces"
+	    (label
+	     :text "${workspaces}${current_workspace}"
+	     :visible false)
+	    (for workspace in workspaces
+		 (eventbox
+		  :onclick "hyprctl dispatch workspace ${workspace.id}"
+		  (box
+		   :class "workspace-entry ${workspace.windows > 0 ? "occupied" : "empty"}"
+		   (label
+		    :text "${workspace.id}"
+		    :class "workspace-entry ${workspace.id == current_workspace ? "current" : ""}"))))))
+
+;; Right Widgets
 (defwidget date []
 	   (box
 	    :class "clock"
@@ -15,6 +32,7 @@
 	    (label :text time_poll)))
 
 (defwidget tray [] (systray :spacing 10))
+
 (defwidget right-widgets []
 	   (box
 	    :class "right-widgets"
@@ -27,20 +45,20 @@
 	   (centerbox
 	    :class "top-bar"
 	    :orientation "h"
-	    ""
+	    (workspaces-widget)
 	    ""
 	    (right-widgets)))
 
 (defwindow top-bar
-           :monitor 0
-           :geometry (geometry :x "0%"
-                               :y "5px"
-                               :width "99%"
-                               :height "32px"
-                               :anchor "top center")
+	   :monitor 0
+	   :geometry (geometry :x "0%"
+			       :y "5px"
+			       :width "99%"
+			       :height "32px"
+			       :anchor "top center")
 	   :stacking "bottom"
-           :reserve (struts :distance "4%" :side "top")
+	   :reserve (struts :distance "4%" :side "top")
 	   :exclusive true
-           :windowtype "dock"
+	   :windowtype "dock"
 	   (bar))
 

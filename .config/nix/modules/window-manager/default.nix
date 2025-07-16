@@ -19,7 +19,7 @@ in {
       hyprpaper
       hyprshade
       mako # notification system developed by swaywm maintainer
-      sddm-dracula
+      # sddm-dracula
       wl-clipboard
       wofi
     ];

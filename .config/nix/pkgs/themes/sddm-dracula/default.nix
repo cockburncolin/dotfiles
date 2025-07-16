@@ -17,7 +17,7 @@ stdenvNoCC.mkDerivation {
     sha256 = "087nal7gw3170ayigbg5j5z0cadph8nwkdaip20mi0xcv71c811r";
   };
 
-  propagetedBuildInputs = [
+  propagatedBuildInputs = [
     qtsvg
     qtquickcontrols2
     qtgraphicaleffects

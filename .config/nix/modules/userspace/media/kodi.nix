@@ -18,7 +18,7 @@ in {
       (pkgs.kodi-wayland.withPackages (kodiPkgs:
         with kodiPkgs; [
           jellyfin
-	  youtube
+          youtube
         ]))
     ];
   };
