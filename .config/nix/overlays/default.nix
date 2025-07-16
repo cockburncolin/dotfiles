@@ -3,7 +3,6 @@
   additions = final: _prev:
     import ../pkgs {
       pkgs = final;
-      epkgs = final;
     };
 
   # This one contains whatever you want to overlay

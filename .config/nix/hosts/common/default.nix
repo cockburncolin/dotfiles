@@ -50,7 +50,6 @@
         additions
         modifications
         stable-packages
-        inputs.emacs-overlay.overlay
       ];
 
       config = {
